@@ -104,14 +104,28 @@ public class AtmTransactionS implements IAtmTransactionS {
 		
 		return findAccountNumber(atmTransactionM.getAccountNumberSource())
 			.flatMap(a -> {
-				atmTransactionM.setBeforeAmount(a.getCurrentAmount());			
+				atmTransactionM.setBeforeAmount(a.getCurrentAmount());
+				atmTransactionM.setBankSource(a.getBank().getName());
+				atmTransactionM.setMaxOfMovement(5);
+				
 				mainModel.setAccountNumber(atmTransactionM.getAccountNumberSource());
 				fixedTermVipModel.setAccountNumber(atmTransactionM.getAccountNumberSource());
 				
+				if (atmTransactionM.getMaxOfMovement() >= atmTransactionM.getNumberOfMovement()) {
+					atmTransactionM.setChargeMovement(0.0);
+				}else {
+					atmTransactionM.setChargeMovement(10.0);
+				}
+				
+				if (atmTransactionM.getBankAtm().equalsIgnoreCase(a.getBank().getName())) {
+					atmTransactionM.setChargeBank(0.0);
+				}else {
+					atmTransactionM.setChargeBank(25.0);
+				}
 				
 				if (atmTransactionM.getType().equalsIgnoreCase("D")) {
 					
-					atmTransactionM.setAfterAmount(a.getCurrentAmount() + atmTransactionM.getAmount());
+					atmTransactionM.setAfterAmount(a.getCurrentAmount() + atmTransactionM.getAmount() - atmTransactionM.getChargeBank() - atmTransactionM.getChargeMovement());
 					mainModel.setCurrentAmount(atmTransactionM.getAfterAmount());
 					fixedTermVipModel.setCurrentAmount(mainModel.getCurrentAmount());
 					
@@ -126,7 +140,7 @@ public class AtmTransactionS implements IAtmTransactionS {
 						
 				}else if (atmTransactionM.getType().equalsIgnoreCase("R")){
 					
-					atmTransactionM.setAfterAmount(a.getCurrentAmount() - atmTransactionM.getAmount());
+					atmTransactionM.setAfterAmount(a.getCurrentAmount() - atmTransactionM.getAmount() - atmTransactionM.getChargeBank() - atmTransactionM.getChargeMovement());
 					mainModel.setCurrentAmount(atmTransactionM.getAfterAmount());
 					fixedTermVipModel.setCurrentAmount(mainModel.getCurrentAmount());
 					

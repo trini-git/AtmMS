@@ -13,6 +13,7 @@ public class MainModel {
 	private int numberOfMovement;
 	private String status;
 	private String createdAt;
+	private Bank bank;
 	
 	public String getId() {
 		return id;
@@ -80,5 +81,10 @@ public class MainModel {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	
+	public Bank getBank() {
+		return bank;
+	}
+	public void setBank(Bank bank) {
+		this.bank = bank;
+	}	
 }
